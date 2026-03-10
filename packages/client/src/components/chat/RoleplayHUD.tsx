@@ -523,11 +523,11 @@ function CharactersWidget({
         className={cn(WIDGET, "border-purple-500/20 text-purple-300")}
         title="Present Characters"
       >
-        <div className="flex h-7 items-center justify-center shrink-0">
+        <div className="flex h-7 max-md:h-4 items-center justify-center shrink-0">
           {characters.length > 0 ? (
             <div className="flex items-center -space-x-0.5">
               {characters.slice(0, 5).map((c, i) => (
-                <span key={i} className="text-sm leading-none">
+                <span key={i} className="text-sm max-md:text-[9px] leading-none">
                   {c.emoji || "👤"}
                 </span>
               ))}
@@ -536,7 +536,7 @@ function CharactersWidget({
               )}
             </div>
           ) : (
-            <Users size={14} className="text-purple-400/50" />
+            <Users size={14} className="text-purple-400/50 max-md:h-3 max-md:w-3" />
           )}
         </div>
         <span className="max-w-full truncate text-[9px] max-md:text-[7px] font-semibold leading-tight shrink-0">
@@ -704,11 +704,11 @@ function PersonaStatsWidget({ bars, onUpdate }: { bars: CharacterStat[]; onUpdat
         className={cn(WIDGET, "border-violet-500/20 text-violet-300")}
         title="Persona Stats"
       >
-        <div className="flex h-7 w-14 flex-col justify-center gap-0.5 shrink-0 px-1">
+        <div className="flex h-7 max-md:h-4 w-14 max-md:w-8 flex-col justify-center gap-0.5 max-md:gap-px shrink-0 px-1 max-md:px-0.5">
           {bars.slice(0, 3).map((bar) => {
             const pct = bar.max > 0 ? Math.min(100, (bar.value / bar.max) * 100) : 0;
             return (
-              <div key={bar.name} className="h-1 w-full rounded-full bg-white/10 overflow-hidden">
+              <div key={bar.name} className="h-1 max-md:h-px w-full rounded-full bg-white/10 overflow-hidden">
                 <div
                   className="h-full rounded-full transition-all duration-500"
                   style={{ width: `${pct}%`, backgroundColor: bar.color || "#8b5cf6" }}
@@ -769,9 +769,11 @@ function InventoryWidget({ items, onUpdate }: { items: InventoryItem[]; onUpdate
         className={cn(WIDGET, "border-amber-500/20 text-amber-300")}
         title="Inventory"
       >
-        <div className="flex h-7 items-center justify-center shrink-0">
-          <Package size={14} className="text-amber-400/60" />
-          {items.length > 0 && <span className="ml-0.5 text-sm font-bold text-amber-300/80">{items.length}</span>}
+        <div className="flex h-7 max-md:h-4 items-center justify-center shrink-0">
+          <Package size={14} className="text-amber-400/60 max-md:h-3 max-md:w-3" />
+          {items.length > 0 && (
+            <span className="ml-0.5 text-sm max-md:text-[8px] font-bold text-amber-300/80">{items.length}</span>
+          )}
         </div>
         <span className="max-w-full truncate text-[9px] max-md:text-[7px] font-semibold leading-tight shrink-0">
           {items.length > 0 ? `${items.length} item${items.length !== 1 ? "s" : ""}` : "Inventory"}
@@ -860,10 +862,10 @@ function QuestsWidget({ quests, onUpdate }: { quests: QuestProgress[]; onUpdate:
         className={cn(WIDGET, "border-emerald-500/20 text-emerald-300")}
         title="Active Quests"
       >
-        <div className="flex h-7 items-center justify-center shrink-0">
-          <Scroll size={14} className="text-emerald-400/60" />
+        <div className="flex h-7 max-md:h-4 items-center justify-center shrink-0">
+          <Scroll size={14} className="text-emerald-400/60 max-md:h-3 max-md:w-3" />
         </div>
-        <span className="max-w-[4.5rem] max-md:max-w-[3rem] truncate text-[9px] max-md:text-[7px] font-semibold leading-tight shrink-0">
+        <span className="max-w-[4.5rem] max-md:max-w-[2rem] truncate text-[9px] max-md:text-[7px] font-semibold leading-tight shrink-0">
           {mainQuest ? mainQuest.name : `${quests.length} quest${quests.length !== 1 ? "s" : ""}`}
         </span>
       </button>
@@ -1007,9 +1009,9 @@ function LabeledEdit({ label, value, onSave }: { label: string; value: string; o
 // ═══════════════════════════════════════════════
 
 const WIDGET =
-  "group flex w-20 h-[3.75rem] max-md:w-14 max-md:h-11 flex-col items-center justify-center gap-0.5 rounded-xl border bg-black/40 backdrop-blur-md transition-all hover:bg-black/60 cursor-pointer select-none overflow-hidden";
+  "group flex w-20 h-[3.75rem] max-md:w-9 max-md:h-7 flex-col items-center justify-center gap-0.5 max-md:gap-0 rounded-xl max-md:rounded-lg border bg-black/40 backdrop-blur-md transition-all hover:bg-black/60 cursor-pointer select-none overflow-hidden";
 const WIDGET_EDIT =
-  "flex w-20 h-[3.75rem] max-md:w-14 max-md:h-11 flex-col items-center justify-center gap-0.5 rounded-xl border bg-black/60 backdrop-blur-md overflow-hidden";
+  "flex w-20 h-[3.75rem] max-md:w-9 max-md:h-7 flex-col items-center justify-center gap-0.5 max-md:gap-0 rounded-xl max-md:rounded-lg border bg-black/60 backdrop-blur-md overflow-hidden";
 
 function WidgetInput({
   value,
@@ -1043,7 +1045,7 @@ function WidgetInput({
       }}
       onBlur={commit}
       className={cn(
-        "w-[4.5rem] max-md:w-[3rem] bg-transparent text-center text-[9px] font-medium outline-none placeholder:text-white/20",
+        "w-[4.5rem] max-md:w-[2rem] bg-transparent text-center text-[9px] max-md:text-[7px] font-medium outline-none placeholder:text-white/20",
         accent,
       )}
     />
@@ -1058,7 +1060,7 @@ function LocationWidget({ value, onSave }: { value: string; onSave: (v: string) 
   if (editing) {
     return (
       <div className={cn(WIDGET_EDIT, "border-emerald-500/25 text-emerald-300")}>
-        <MapPin size={14} className="text-emerald-400/60 mb-0.5" />
+        <MapPin size={14} className="text-emerald-400/60 mb-0.5 max-md:h-3 max-md:w-3 max-md:mb-0" />
         <WidgetInput value={value} onSave={onSave} onCancel={() => setEditing(false)} accent="text-emerald-300" />
       </div>
     );
@@ -1070,7 +1072,7 @@ function LocationWidget({ value, onSave }: { value: string; onSave: (v: string) 
       className={cn(WIDGET, "border-emerald-500/20 text-emerald-300")}
       title="Click to edit location"
     >
-      <div className="relative flex h-7 w-14 items-center justify-center shrink-0">
+      <div className="relative flex h-7 max-md:h-4 w-14 max-md:w-8 items-center justify-center shrink-0">
         <div className="absolute inset-0 rounded-md overflow-hidden opacity-40">
           <div className="absolute inset-0 bg-gradient-to-br from-emerald-900/60 via-emerald-800/40 to-emerald-950/60" />
           <svg className="absolute inset-0 w-full h-full" viewBox="0 0 56 28">
@@ -1130,11 +1132,14 @@ function LocationWidget({ value, onSave }: { value: string; onSave: (v: string) 
             />
           </svg>
         </div>
-        <MapPin size={14} className="relative text-emerald-400 drop-shadow-[0_0_4px_rgba(52,211,153,0.5)]" />
+        <MapPin
+          size={14}
+          className="relative text-emerald-400 drop-shadow-[0_0_4px_rgba(52,211,153,0.5)] max-md:h-3 max-md:w-3"
+        />
       </div>
       <span
         className={cn(
-          "max-w-[4.5rem] max-md:max-w-[3rem] truncate text-[9px] max-md:text-[7px] font-semibold leading-tight shrink-0",
+          "max-w-[4.5rem] max-md:max-w-[2rem] truncate text-[9px] max-md:text-[7px] font-semibold leading-tight shrink-0",
           !value && "italic opacity-40",
         )}
       >
@@ -1153,7 +1158,7 @@ function CalendarWidget({ value, onSave }: { value: string; onSave: (v: string) 
   if (editing) {
     return (
       <div className={cn(WIDGET_EDIT, "border-violet-500/25 text-violet-300")}>
-        <CalendarDays size={14} className="text-violet-400/60 mb-0.5" />
+        <CalendarDays size={14} className="text-violet-400/60 mb-0.5 max-md:h-3 max-md:w-3 max-md:mb-0" />
         <WidgetInput value={value} onSave={onSave} onCancel={() => setEditing(false)} accent="text-violet-300" />
       </div>
     );
@@ -1165,17 +1170,19 @@ function CalendarWidget({ value, onSave }: { value: string; onSave: (v: string) 
       className={cn(WIDGET, "border-violet-500/20 text-violet-300")}
       title="Click to edit date"
     >
-      <div className="flex h-7 w-8 flex-col rounded-sm border border-violet-400/30 overflow-hidden bg-violet-950/30 shrink-0">
-        <div className="flex h-2.5 items-center justify-center bg-violet-500/25">
-          <span className="text-[5px] font-bold uppercase tracking-wider text-violet-300/80">{month || "———"}</span>
+      <div className="flex h-7 max-md:h-4 w-8 max-md:w-5 flex-col rounded-sm border border-violet-400/30 overflow-hidden bg-violet-950/30 shrink-0">
+        <div className="flex h-2.5 max-md:h-1.5 items-center justify-center bg-violet-500/25">
+          <span className="text-[5px] max-md:text-[3px] font-bold uppercase tracking-wider text-violet-300/80">
+            {month || "———"}
+          </span>
         </div>
         <div className="flex flex-1 items-center justify-center">
-          <span className="text-[12px] font-bold leading-none text-violet-200/80">{day || "?"}</span>
+          <span className="text-[12px] max-md:text-[8px] font-bold leading-none text-violet-200/80">{day || "?"}</span>
         </div>
       </div>
       <span
         className={cn(
-          "max-w-[4.5rem] max-md:max-w-[3rem] truncate text-[9px] max-md:text-[7px] font-semibold leading-tight shrink-0",
+          "max-w-[4.5rem] max-md:max-w-[2rem] truncate text-[9px] max-md:text-[7px] font-semibold leading-tight shrink-0",
           !value && "italic opacity-40",
         )}
       >
@@ -1196,7 +1203,7 @@ function ClockWidget({ value, onSave }: { value: string; onSave: (v: string) => 
   if (editing) {
     return (
       <div className={cn(WIDGET_EDIT, "border-amber-500/25 text-amber-300")}>
-        <Clock size={14} className="text-amber-400/60 mb-0.5" />
+        <Clock size={14} className="text-amber-400/60 mb-0.5 max-md:h-3 max-md:w-3 max-md:mb-0" />
         <WidgetInput value={value} onSave={onSave} onCancel={() => setEditing(false)} accent="text-amber-300" />
       </div>
     );
@@ -1210,7 +1217,7 @@ function ClockWidget({ value, onSave }: { value: string; onSave: (v: string) => 
       className={cn(WIDGET, "border-amber-500/20 text-amber-300")}
       title="Click to edit time"
     >
-      <div className="relative flex h-7 w-7 items-center justify-center shrink-0">
+      <div className="relative flex h-7 max-md:h-4 w-7 max-md:w-4 items-center justify-center shrink-0">
         <svg viewBox="0 0 32 32" className="h-full w-full">
           <circle
             cx="16"
@@ -1266,7 +1273,7 @@ function ClockWidget({ value, onSave }: { value: string; onSave: (v: string) => 
       </div>
       <span
         className={cn(
-          "max-w-[4.5rem] max-md:max-w-[3rem] truncate text-[9px] max-md:text-[7px] font-semibold leading-tight shrink-0",
+          "max-w-[4.5rem] max-md:max-w-[2rem] truncate text-[9px] max-md:text-[7px] font-semibold leading-tight shrink-0",
           !value && "italic opacity-40",
         )}
       >
@@ -1285,7 +1292,7 @@ function WeatherWidget({ value, onSave }: { value: string; onSave: (v: string) =
   if (editing) {
     return (
       <div className={cn(WIDGET_EDIT, "border-sky-500/25 text-sky-300")}>
-        <span className="text-base mb-0.5">{emoji}</span>
+        <span className="text-base max-md:text-xs mb-0.5">{emoji}</span>
         <WidgetInput value={value} onSave={onSave} onCancel={() => setEditing(false)} accent="text-sky-300" />
       </div>
     );
@@ -1297,12 +1304,12 @@ function WeatherWidget({ value, onSave }: { value: string; onSave: (v: string) =
       className={cn(WIDGET, "border-sky-500/20 text-sky-300")}
       title="Click to edit weather"
     >
-      <div className="flex h-7 items-center justify-center shrink-0">
-        <span className="text-xl leading-none drop-shadow-[0_0_6px_rgba(56,189,248,0.3)]">{emoji}</span>
+      <div className="flex h-7 max-md:h-4 items-center justify-center shrink-0">
+        <span className="text-xl max-md:text-xs leading-none drop-shadow-[0_0_6px_rgba(56,189,248,0.3)]">{emoji}</span>
       </div>
       <span
         className={cn(
-          "max-w-[4.5rem] max-md:max-w-[3rem] truncate text-[9px] max-md:text-[7px] font-semibold leading-tight shrink-0",
+          "max-w-[4.5rem] max-md:max-w-[2rem] truncate text-[9px] max-md:text-[7px] font-semibold leading-tight shrink-0",
           !value && "italic opacity-40",
         )}
       >
@@ -1332,7 +1339,7 @@ function TemperatureWidget({ value, onSave }: { value: string; onSave: (v: strin
   if (editing) {
     return (
       <div className={cn(WIDGET_EDIT, "border-rose-500/25 text-rose-300")}>
-        <Thermometer size={14} className="text-rose-400/60 mb-0.5" />
+        <Thermometer size={14} className="text-rose-400/60 mb-0.5 max-md:h-3 max-md:w-3 max-md:mb-0" />
         <WidgetInput value={value} onSave={onSave} onCancel={() => setEditing(false)} accent="text-rose-300" />
       </div>
     );
@@ -1344,7 +1351,7 @@ function TemperatureWidget({ value, onSave }: { value: string; onSave: (v: strin
       className={cn(WIDGET, "border-rose-500/20 text-rose-300")}
       title="Click to edit temperature"
     >
-      <div className="relative flex h-7 items-center justify-center shrink-0">
+      <div className="relative flex h-7 max-md:h-4 items-center justify-center shrink-0">
         <svg viewBox="0 0 16 32" className="h-full" style={{ width: "auto" }}>
           <rect
             x="5.5"
@@ -1392,7 +1399,7 @@ function TemperatureWidget({ value, onSave }: { value: string; onSave: (v: strin
       </div>
       <span
         className={cn(
-          "max-w-[4.5rem] max-md:max-w-[3rem] truncate text-[9px] max-md:text-[7px] font-semibold leading-tight shrink-0",
+          "max-w-[4.5rem] max-md:max-w-[2rem] truncate text-[9px] max-md:text-[7px] font-semibold leading-tight shrink-0",
           !value && "italic opacity-40",
         )}
       >
