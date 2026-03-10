@@ -10,7 +10,7 @@ import {
   nameToXmlTag,
   DEFAULT_AGENT_TOOLS,
 } from "@marinara-engine/shared";
-import type { AgentContext, AgentResult, AgentPhase, APIProvider, GameState } from "@marinara-engine/shared";
+import type { AgentContext, AgentResult, AgentPhase, APIProvider, CharacterStat, GameState, PlayerStats } from "@marinara-engine/shared";
 import { createChatsStorage } from "../services/storage/chats.storage.js";
 import { createConnectionsStorage } from "../services/storage/connections.storage.js";
 import { createPromptsStorage } from "../services/storage/prompts.storage.js";
@@ -1418,8 +1418,8 @@ export async function generateRoutes(app: FastifyInstance) {
                   temperature: newTemperature,
                   presentCharacters: (gs.presentCharacters as any[]) ?? [],
                   recentEvents: (gs.recentEvents as string[]) ?? [],
-                  playerStats: (gs.playerStats as any[]) ?? (prevSnap?.playerStats ? (typeof prevSnap.playerStats === "string" ? JSON.parse(prevSnap.playerStats) : prevSnap.playerStats) : null),
-                  personaStats: (gs.personaStats as any[]) ?? null,
+                  playerStats: (gs.playerStats as PlayerStats | null) ?? (prevSnap?.playerStats ? (typeof prevSnap.playerStats === "string" ? JSON.parse(prevSnap.playerStats) : prevSnap.playerStats) : null),
+                  personaStats: (gs.personaStats as CharacterStat[] | null) ?? null,
                 },
                 manualOverrides,
               );
