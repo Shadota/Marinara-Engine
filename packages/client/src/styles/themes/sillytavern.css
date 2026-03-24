@@ -157,8 +157,9 @@
   /* Cursor — disabled via class overrides; no custom cursor SVG */
   --cursor-pink: none;
 
-  /* Font: Noto Sans is SillyTavern's house font */
-  --font-y2k: "Straight Quotes", "Noto Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  /* Font: Noto Sans is SillyTavern's house font, but respect user's custom font choice */
+  --font-y2k:
+    "Straight Quotes", var(--font-user, "Noto Sans"), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --app-font-size: 0.875rem;
 }
 
