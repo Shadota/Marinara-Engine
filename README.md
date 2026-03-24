@@ -1,7 +1,5 @@
 # 🍝 Marinara Engine
 
-## Release 1.4.2
-
 <h3 align="center"><b>Fun. Intuitive. Plug-And-Play.</b></h3>
 
 <p align="center">
@@ -58,8 +56,8 @@
 
 **Added:**
 
-- **Lorebook Support for Conversations** — Lorebooks now work in Conversation mode. Attach lorebooks via Chat Settings and triggered entries are injected into the prompt wrapped in `<lore>` tags. Supports keyword, regex, and semantic matching.
-- **Persona Comment Field** — Personas can now have a comment subtitle for disambiguation (e.g. "Modern AU version"). Shown in the Personas panel, persona editor, and chat persona picker. Search in the picker also matches comments.
+- **Lorebook Support for Conversations** — Lorebooks now work in Conversation mode. Attach lorebooks via Chat Settings, and triggered entries are injected into the prompt wrapped in `<lore>` tags. Supports keyword, regex, and semantic matching.
+- **Persona Comment Field** — Personas can now have a comment subtitle for disambiguation (e.g., "Modern AU version"). Shown in the Personas panel, the persona editor, and the chat persona picker. Search in the picker also matches comments.
 - **Smart Typographic Quotes** — AI responses now auto-convert straight quotes to curly typographic quotes: `"` → \u201C\u201D, paired `'` → \u2018\u2019, and remaining `'` → \u2019 (apostrophes).
 - **Mobile Access Documentation** — Added "Accessing from Mobile" section to README with IP discovery instructions for all platforms and a Tailscale tip.
 
@@ -69,29 +67,6 @@
 - **Mobile Action Icons** — Trash and action icons on cards in Characters, Personas, Lorebooks, Connections, and Presets panels are now always visible on mobile.
 - **Embeddings Double /v1/** — Fixed OpenRouter embeddings returning 404 due to double `/v1/v1/embeddings` in the URL.
 - **SSRF Check Removal** — Removed overly aggressive SSRF private-IP validation that blocked legitimate local and LAN connections in this local-first app.
-
-### v1.4.1
-
-**Added:**
-
-- **Per-Connection Embedding Provider** — Each connection can now specify a separate API connection to use for embeddings, instead of always using the same provider. Configurable from the Connection Editor and overridable per-chat in Chat Settings.
-
-**Bug Fixes:**
-
-- **Preset Variable Editing Reset** — Editing a preset variable (renaming, changing options) no longer resets selections for all other variables back to defaults.
-- **Modal Visual Flicker** — Rewrote Modal.tsx from framer-motion to pure CSS transitions, eliminating the persistent flicker caused by React.StrictMode double-rendering and spring animation overshoot.
-- **Mobile Viewport Overlap** — Chat UI no longer disappears behind mobile browser chrome. Root container changed from `h-screen`/`100dvh` to `fixed inset-0` for reliable mobile viewport sizing.
-- **GPT-5.4 Reasoning Summaries** — All `gpt-5.4` variants (not just `gpt-5.4-pro`) now correctly route through the Responses API, and reasoning summaries are extracted in both streaming and non-streaming paths.
-- **xHigh Reasoning Effort** — The `xhigh` reasoning tier is now properly gated to `gpt-5.4*` models only, preventing unsupported effort values from being sent to other providers.
-- **Embedding Connection URL Resolution** — Embedding connections now use `resolveBaseUrl()` for proper URL construction, fixing failures when the alternate embedding provider had a non-standard base URL.
-- **Embedding Model Fallback** — When an alternate embedding connection has no embedding model configured, the system now correctly falls back to the source connection's embedding model.
-- **Concurrent Cross-Chat Generation** — Sending messages to multiple DnD/idle chats no longer causes messages to vanish or UI corruption. SSE events are now scoped per-chat so background generations don't interfere with the active view.
-- **Chat Switch Streaming Restoration** — Switching to a chat with an in-progress generation now correctly restores the typing indicator, delayed status, and streaming UI.
-- **Mobile Delete Button Visibility** — The delete button on chat sidebar entries is now always visible on mobile devices.
-- **Conversation Prompt Persistence** — Custom conversation system prompts are now saved as the default for new conversations.
-- **New Conversation Wizard Scroll** — The setup wizard no longer overflows the viewport on smaller screens.
-- **User Status Persistence** — DnD/idle status now survives page refresh.
-- **Chat Summary Invalidation** — The chat summary event now correctly refreshes the generating chat instead of the active chat.
 
 ---
 
@@ -236,7 +211,7 @@ If you're running Marinara Engine on your computer and want to use it from your 
 
 3. **Install the PWA** — tap the browser menu and "Add to Home Screen" for a native app feel.
 
-> **Tip:** If you're not on the same Wi-Fi, tools like [Tailscale](https://tailscale.com/) give each device a stable IP on a private network — install it on both devices, then use the Tailscale IP of your computer instead.
+> **Tip:** If you're not on the same Wi-Fi, tools like [Tailscale](https://tailscale.com/) give each device a stable IP address on a private network — install it on both devices, then use your computer's Tailscale IP instead.
 
 ---
 
