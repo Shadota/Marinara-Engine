@@ -113,8 +113,6 @@ export function ConversationInput({ characterNames = [] }: ConversationInputProp
         const draft = activeChatId ? (useChatStore.getState().inputDrafts.get(activeChatId) ?? "") : "";
         textareaRef.current.value = draft;
         setHasInput(draft.length > 0);
-        textareaRef.current.style.height = "auto";
-        textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 160)}px`;
       }
     }
   }, [activeChatId, setInputDraft]);
@@ -172,7 +170,6 @@ export function ConversationInput({ characterNames = [] }: ConversationInputProp
       const message = applyToUserInput(raw);
       if (textareaRef.current) {
         textareaRef.current.value = "";
-        textareaRef.current.style.height = "auto";
       }
       setHasInput(false);
       clearInputDraft(activeChatId);
@@ -212,7 +209,6 @@ export function ConversationInput({ characterNames = [] }: ConversationInputProp
     const message = applyToUserInput(raw);
     if (textareaRef.current) {
       textareaRef.current.value = "";
-      textareaRef.current.style.height = "auto";
     }
     setHasInput(false);
     clearInputDraft(activeChatId);
@@ -280,8 +276,6 @@ export function ConversationInput({ characterNames = [] }: ConversationInputProp
   const handleInput = useCallback(() => {
     const el = textareaRef.current;
     if (!el) return;
-    el.style.height = "auto";
-    el.style.height = `${Math.min(el.scrollHeight, 160)}px`;
     setHasInput(el.value.length > 0);
 
     // Slash completions
@@ -425,7 +419,7 @@ export function ConversationInput({ characterNames = [] }: ConversationInputProp
           rows={1}
           onInput={handleInput}
           onKeyDown={handleKeyDown}
-          className="max-h-[12.5rem] min-w-0 flex-1 resize-none bg-transparent py-0 text-[1rem] leading-normal text-white/90 outline-none placeholder:text-white/30"
+          className="max-h-[12.5rem] min-w-0 flex-1 resize-none bg-transparent py-0 text-[1rem] leading-normal text-white/90 outline-none placeholder:text-white/30 [field-sizing:content]"
         />
 
         {/* Right actions */}
