@@ -4,7 +4,7 @@
 
 # ── Stage 1: Build ──
 FROM node:20-slim AS builder
-ARG PNPM_VERSION=9.15.0
+ARG PNPM_VERSION=10.30.3
 WORKDIR /app
 
 # Enable corepack for pnpm
@@ -30,7 +30,7 @@ RUN pnpm build
 
 # ── Stage 2: Production ──
 FROM node:20-slim AS production
-ARG PNPM_VERSION=9.15.0
+ARG PNPM_VERSION=10.30.3
 WORKDIR /app
 
 RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate

@@ -14,7 +14,7 @@ const llmDispatcher = new Agent({ bodyTimeout: 0, headersTimeout: 0 });
  * with no body/headers timeout. Use this for all outgoing LLM requests.
  */
 export function llmFetch(url: string | URL, init?: RequestInit): Promise<Response> {
-  return fetch(url, { ...init, dispatcher: llmDispatcher } as RequestInit);
+  return fetch(url, { ...init, dispatcher: llmDispatcher } as unknown as RequestInit);
 }
 
 export interface ChatMessage {

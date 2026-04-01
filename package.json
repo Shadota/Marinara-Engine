@@ -14,7 +14,7 @@
     "dev": "pnpm build:shared && pnpm --filter @marinara-engine/server --filter @marinara-engine/client -r --parallel run dev",
     "dev:server": "pnpm --filter @marinara-engine/server dev",
     "dev:client": "pnpm --filter @marinara-engine/client dev",
-    "build": "pnpm --filter @marinara-engine/shared build && pnpm -r --parallel run build",
+    "build": "pnpm --filter @marinara-engine/shared build && pnpm --filter @marinara-engine/server --filter @marinara-engine/client --parallel run build",
     "build:shared": "pnpm --filter @marinara-engine/shared build",
     "build:server": "pnpm --filter @marinara-engine/server build",
     "build:client": "pnpm --filter @marinara-engine/client build",
