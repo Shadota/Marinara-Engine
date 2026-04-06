@@ -2410,6 +2410,7 @@ export async function generateRoutes(app: FastifyInstance) {
           if (mem.overarchingArc) state.overarchingArc = mem.overarchingArc;
           if (mem.sceneDirections) state.sceneDirections = mem.sceneDirections;
           if (mem.pacing) state.pacing = mem.pacing;
+          if (mem.recentlyFulfilled) state.recentlyFulfilled = mem.recentlyFulfilled;
           if (Object.keys(state).length > 0) {
             agentContext.memory._secretPlotState = state;
           }
@@ -2822,10 +2823,18 @@ export async function generateRoutes(app: FastifyInstance) {
               await agentsStore.setMemory(agentConfigId, input.chatId, "overarchingArc", plotData.overarchingArc);
             }
             if (plotData.sceneDirections) {
-              const directions = (plotData.sceneDirections as Array<{ direction: string; fulfilled: boolean }>).filter(
-                (d) => !d.fulfilled,
-              );
-              await agentsStore.setMemory(agentConfigId, input.chatId, "sceneDirections", directions);
+              const allDirections = plotData.sceneDirections as Array<{ direction: string; fulfilled: boolean }>;
+              const active = allDirections.filter((d) => !d.fulfilled);
+              const justFulfilled = allDirections.filter((d) => d.fulfilled).map((d) => d.direction);
+              await agentsStore.setMemory(agentConfigId, input.chatId, "sceneDirections", active);
+
+              // Keep a rolling window of recently fulfilled directions so the agent doesn't repeat them
+              if (justFulfilled.length > 0) {
+                const mem = await agentsStore.getMemory(agentConfigId, input.chatId);
+                const prev = (mem.recentlyFulfilled as string[] | undefined) ?? [];
+                const merged = [...prev, ...justFulfilled].slice(-10); // keep last 10
+                await agentsStore.setMemory(agentConfigId, input.chatId, "recentlyFulfilled", merged);
+              }
             }
             if (plotData.pacing) {
               await agentsStore.setMemory(agentConfigId, input.chatId, "pacing", plotData.pacing);
