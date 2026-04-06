@@ -922,6 +922,17 @@ export function ChatRoleplaySurface({
 
                 {messages?.map((msg, i) => {
                   const isRegenerating = isStreaming && regenerateMessageId === msg.id;
+                  // While the StreamingIndicator is active (new message streaming, not regen),
+                  // hide the last assistant message from the list to prevent a duplicate flash
+                  // when refreshMessagesAuthoritatively lands the real row before setStreaming(false).
+                  if (
+                    isStreaming &&
+                    !regenerateMessageId &&
+                    msg.role === "assistant" &&
+                    msg.id === lastAssistantMessageId
+                  ) {
+                    return null;
+                  }
                   return (
                     <div
                       key={msg.id}
