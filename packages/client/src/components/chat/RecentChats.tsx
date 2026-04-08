@@ -1,6 +1,6 @@
 // ──────────────────────────────────────────────
 // Chat: Recent Chats — shows 3 most recently
-// interacted chats on the homepage
+// interacted chats on the homepage (compact row)
 // ──────────────────────────────────────────────
 import { useMemo } from "react";
 import { MessageSquare, BookOpen } from "lucide-react";
@@ -12,17 +12,17 @@ import type { Chat } from "@marinara-engine/shared";
 
 const MODE_BADGE: Record<string, { icon: React.ReactNode; bg: string; label: string }> = {
   conversation: {
-    icon: <MessageSquare size="0.5rem" />,
+    icon: <MessageSquare size="0.375rem" />,
     bg: "linear-gradient(135deg, #4de5dd, #3ab8b1)",
     label: "Conversation",
   },
   roleplay: {
-    icon: <BookOpen size="0.5rem" />,
+    icon: <BookOpen size="0.375rem" />,
     bg: "linear-gradient(135deg, #eb8951, #d97530)",
     label: "Roleplay",
   },
   visual_novel: {
-    icon: <BookOpen size="0.5rem" />,
+    icon: <BookOpen size="0.375rem" />,
     bg: "linear-gradient(135deg, #e15c8c, #c94776)",
     label: "Game",
   },
@@ -33,7 +33,6 @@ export function RecentChats() {
   const { data: allCharacters } = useCharacters();
   const setActiveChatId = useChatStore((s) => s.setActiveChatId);
 
-  // Build character lookup: id → { name, avatarUrl }
   const charLookup = useMemo(() => {
     const map = new Map<string, { name: string; avatarUrl: string | null }>();
     if (!allCharacters) return map;
@@ -51,7 +50,6 @@ export function RecentChats() {
     return map;
   }, [allCharacters]);
 
-  // Get 3 most recently updated chats
   const recentChats = useMemo(() => {
     if (!chats || chats.length === 0) return [];
     return [...chats]
@@ -62,13 +60,13 @@ export function RecentChats() {
   if (recentChats.length === 0) return null;
 
   return (
-    <div className="flex w-full max-w-md flex-col items-center gap-2">
-      <p className="text-xs font-medium text-[var(--muted-foreground)]/60 tracking-wide uppercase">
+    <div className="flex w-full max-w-md flex-col items-center gap-1.5">
+      <p className="text-[0.625rem] font-medium text-[var(--muted-foreground)]/50 tracking-wide uppercase">
         Recent Chats
       </p>
-      <div className="flex w-full flex-col gap-1.5">
+      <div className="flex w-full items-center justify-center gap-1.5">
         {recentChats.map((chat) => (
-          <RecentChatRow
+          <RecentChatChip
             key={chat.id}
             chat={chat}
             charLookup={charLookup}
@@ -80,7 +78,7 @@ export function RecentChats() {
   );
 }
 
-function RecentChatRow({
+function RecentChatChip({
   chat,
   charLookup,
   onClick,
@@ -91,82 +89,52 @@ function RecentChatRow({
 }) {
   const mode = MODE_BADGE[chat.mode] ?? MODE_BADGE.conversation;
 
-  // Parse character IDs
   const charIds: string[] = useMemo(() => {
     if (!chat.characterIds) return [];
     return typeof chat.characterIds === "string" ? JSON.parse(chat.characterIds) : chat.characterIds;
   }, [chat.characterIds]);
 
-  const avatars = useMemo(
-    () =>
-      charIds
-        .slice(0, 3)
-        .map((id) => charLookup.get(id))
-        .filter(Boolean) as { name: string; avatarUrl: string | null }[],
-    [charIds, charLookup],
-  );
+  const firstAvatar = useMemo(() => {
+    for (const id of charIds) {
+      const c = charLookup.get(id);
+      if (c) return c;
+    }
+    return null;
+  }, [charIds, charLookup]);
 
   return (
     <button
       onClick={onClick}
       className={cn(
-        "group relative flex w-full items-center gap-3 rounded-xl border border-[var(--border)]/60 bg-[var(--card)]/60 px-3 py-2.5",
-        "transition-all duration-150 hover:-translate-y-0.5 hover:border-[var(--primary)]/40 hover:bg-[var(--card)] hover:shadow-md",
-        "cursor-pointer text-left",
+        "group relative flex max-w-[8rem] items-center gap-1.5 rounded-lg border border-[var(--border)]/50 bg-[var(--card)]/50 px-2 py-1.5",
+        "transition-all duration-150 hover:border-[var(--primary)]/40 hover:bg-[var(--card)] hover:shadow-sm",
+        "cursor-pointer",
       )}
     >
-      {/* Avatar area with mode badge */}
+      {/* Small avatar with mode dot */}
       <div className="relative flex-shrink-0">
-        {avatars.length === 0 ? (
+        {firstAvatar?.avatarUrl ? (
+          <img
+            src={firstAvatar.avatarUrl}
+            alt={firstAvatar.name}
+            className="h-5 w-5 rounded-md object-cover"
+          />
+        ) : firstAvatar ? (
+          <div className="flex h-5 w-5 items-center justify-center rounded-md bg-[var(--secondary)] text-[0.5rem] font-bold text-[var(--muted-foreground)]">
+            {firstAvatar.name[0]}
+          </div>
+        ) : (
           <div
-            className="flex h-9 w-9 items-center justify-center rounded-lg text-white shadow-sm"
+            className="flex h-5 w-5 items-center justify-center rounded-md text-white"
             style={{ background: mode.bg }}
           >
             {mode.icon}
           </div>
-        ) : avatars.length === 1 ? (
-          avatars[0]!.avatarUrl ? (
-            <img
-              src={avatars[0]!.avatarUrl}
-              alt={avatars[0]!.name}
-              className="h-9 w-9 rounded-lg object-cover"
-            />
-          ) : (
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[var(--secondary)] text-sm font-bold text-[var(--muted-foreground)]">
-              {avatars[0]!.name[0]}
-            </div>
-          )
-        ) : (
-          <div className="relative h-9 w-9">
-            {avatars.slice(0, 2).map((a, i) =>
-              a.avatarUrl ? (
-                <img
-                  key={i}
-                  src={a.avatarUrl}
-                  alt={a.name}
-                  className={cn(
-                    "absolute h-6 w-6 rounded-full object-cover ring-2 ring-[var(--card)]",
-                    i === 0 ? "top-0 left-0 z-10" : "bottom-0 right-0",
-                  )}
-                />
-              ) : (
-                <div
-                  key={i}
-                  className={cn(
-                    "absolute flex h-6 w-6 items-center justify-center rounded-full bg-[var(--secondary)] text-[0.5rem] font-bold text-[var(--muted-foreground)] ring-2 ring-[var(--card)]",
-                    i === 0 ? "top-0 left-0 z-10" : "bottom-0 right-0",
-                  )}
-                >
-                  {a.name[0]}
-                </div>
-              ),
-            )}
-          </div>
         )}
 
-        {/* Mode badge - top left corner */}
+        {/* Tiny mode dot */}
         <div
-          className="absolute -top-1 -left-1 flex h-4 w-4 items-center justify-center rounded-full text-white shadow-sm ring-2 ring-[var(--card)]/80"
+          className="absolute -top-0.5 -left-0.5 flex h-3 w-3 items-center justify-center rounded-full text-white ring-1 ring-[var(--card)]"
           style={{ background: mode.bg }}
           title={mode.label}
         >
@@ -174,21 +142,9 @@ function RecentChatRow({
         </div>
       </div>
 
-      {/* Chat info */}
-      <div className="min-w-0 flex-1">
-        <span className="block truncate text-sm font-medium text-[var(--foreground)]">
-          {chat.name}
-        </span>
-        <span className="block truncate text-[0.625rem] text-[var(--muted-foreground)]/60">
-          {avatars.length > 0
-            ? avatars.map((a) => a.name).join(", ")
-            : mode.label}
-        </span>
-      </div>
-
-      {/* Arrow indicator on hover */}
-      <span className="shrink-0 text-[var(--muted-foreground)]/40 transition-all group-hover:text-[var(--primary)] group-hover:translate-x-0.5">
-        →
+      {/* Chat name only */}
+      <span className="truncate text-[0.625rem] font-medium text-[var(--foreground)]">
+        {chat.name}
       </span>
     </button>
   );
