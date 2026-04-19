@@ -33,6 +33,7 @@ export function ModelDownloadModal({ open, onClose }: Props) {
     status,
     config,
     runtime,
+    inferenceReady,
     logPath,
     downloadProgress,
     customModels,
@@ -43,6 +44,7 @@ export function ModelDownloadModal({ open, onClose }: Props) {
     listHuggingFaceModels,
     clearCustomModels,
     cancelDownload,
+    unloadModel,
     markPrompted,
     fetchStatus,
   } = useSidecarStore();
@@ -54,6 +56,14 @@ export function ModelDownloadModal({ open, onClose }: Props) {
   const isDownloading = downloadProgress?.status === "downloading";
   const hasModel = !!config.modelPath;
   const activeModelName = useMemo(() => config.modelPath?.split("/").pop() ?? null, [config.modelPath]);
+  const shouldAutoStart = config.useForTrackers || config.useForGameScene;
+  const isPreparingServer =
+    hasModel &&
+    shouldAutoStart &&
+    !inferenceReady &&
+    (status === "starting_server" || status === "downloaded");
+  const isSetupBusy = isDownloading || status === "downloading_runtime" || isPreparingServer;
+  const canFinish = status === "ready" && inferenceReady;
 
   useEffect(() => {
     if (!open) {
@@ -75,10 +85,29 @@ export function ModelDownloadModal({ open, onClose }: Props) {
 
   const progress = downloadProgress;
   const progressPercent = progress && progress.total > 0 ? Math.round((progress.downloaded / progress.total) * 100) : 0;
-  const progressLabel =
+  const setupLabel =
     progress?.phase === "runtime"
       ? `Downloading llama.cpp runtime${progress.label ? ` (${progress.label})` : ""}...`
-      : `Downloading model${progress?.label ? ` (${progress.label})` : ""}...`;
+      : progress?.phase === "model"
+        ? `Downloading model${progress.label ? ` (${progress.label})` : ""}...`
+        : isPreparingServer
+          ? "Starting local runtime..."
+          : "Setting up local runtime...";
+  const setupDescription =
+    progress?.phase === "model"
+      ? "Downloading your selected GGUF and preparing it for local use."
+      : progress?.phase === "runtime"
+        ? "Downloading the official llama.cpp runtime for this device."
+        : "Loading the model and starting the local llama-server. This can take a few seconds.";
+  const runtimeStatusLabel = canFinish
+    ? "Ready"
+    : isSetupBusy
+      ? "Setting up now"
+      : status === "server_error"
+        ? "Setup error"
+        : runtime.installed
+          ? "Installed"
+          : "Not downloaded yet";
 
   const handleSkip = () => {
     markPrompted();
@@ -105,8 +134,17 @@ export function ModelDownloadModal({ open, onClose }: Props) {
     onClose();
   };
 
+  const handleCancelSetup = () => {
+    if (isPreparingServer) {
+      void unloadModel();
+      return;
+    }
+
+    void cancelDownload();
+  };
+
   return (
-    <Modal open={open} onClose={isDownloading ? () => {} : onClose} title="Local AI Model" width="max-w-2xl">
+    <Modal open={open} onClose={isSetupBusy ? () => {} : onClose} title="Local AI Model" width="max-w-2xl">
       <div className="flex flex-col gap-5">
         <div className="flex items-start gap-3">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-purple-500/10">
@@ -148,20 +186,12 @@ export function ModelDownloadModal({ open, onClose }: Props) {
             Runtime
           </div>
           <div className="mt-2 flex flex-col gap-1 text-xs text-[var(--muted-foreground)]">
-            <span>
-              Status:{" "}
-              {status === "ready"
-                ? "Ready"
-                : status === "starting_server"
-                  ? "Starting local server"
-                  : status === "downloading_runtime"
-                    ? "Downloading runtime"
-                    : status === "server_error"
-                      ? "Server error"
-                      : runtime.installed
-                        ? "Installed"
-                        : "Not downloaded yet"}
-            </span>
+            <span>Status: {runtimeStatusLabel}</span>
+            {isSetupBusy && (
+              <span>
+                Setup in progress. Marinara is still downloading the runtime or starting the local llama-server.
+              </span>
+            )}
             {runtime.installed && (
               <span>
                 Runtime build: {runtime.build} • {runtime.variant}
@@ -171,7 +201,47 @@ export function ModelDownloadModal({ open, onClose }: Props) {
           </div>
         </div>
 
-        {!isDownloading && (
+        {isSetupBusy && (
+          <div className="rounded-xl border border-purple-400/25 bg-purple-500/5 p-4">
+            <div className="flex items-start gap-3">
+              <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-purple-500/15">
+                <Loader2 size="1rem" className="animate-spin text-purple-300" />
+              </div>
+              <div className="flex-1">
+                <div className="text-sm font-medium text-purple-200">{setupLabel}</div>
+                <div className="mt-1 text-xs text-[var(--muted-foreground)]/80">{setupDescription}</div>
+              </div>
+            </div>
+
+            {progress ? (
+              <div className="mt-4 flex flex-col gap-2">
+                <div className="flex items-center justify-between text-xs text-[var(--muted-foreground)]">
+                  <span>{setupLabel}</span>
+                  <span>
+                    {formatBytes(progress.downloaded)}
+                    {progress.total > 0 && ` / ${formatBytes(progress.total)}`}
+                  </span>
+                </div>
+                <div className="h-2 w-full overflow-hidden rounded-full bg-[var(--border)]">
+                  <div
+                    className="h-full rounded-full bg-purple-400 transition-all duration-300"
+                    style={{ width: `${progressPercent}%` }}
+                  />
+                </div>
+                <div className="flex items-center justify-between text-xs text-[var(--muted-foreground)]/60">
+                  <span>{progressPercent}%</span>
+                  {progress.speed > 0 && <span>{formatSpeed(progress.speed)}</span>}
+                </div>
+              </div>
+            ) : (
+              <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-[var(--border)]">
+                <div className="h-full w-1/3 animate-pulse rounded-full bg-purple-400/80" />
+              </div>
+            )}
+          </div>
+        )}
+
+        {!isSetupBusy && (
           <>
             <div className="flex flex-col gap-2">
               <span className="text-xs font-medium uppercase tracking-wider text-[var(--muted-foreground)]/60">
@@ -291,28 +361,6 @@ export function ModelDownloadModal({ open, onClose }: Props) {
           </>
         )}
 
-        {isDownloading && progress && (
-          <div className="flex flex-col gap-2">
-            <div className="flex items-center justify-between text-xs text-[var(--muted-foreground)]">
-              <span>{progressLabel}</span>
-              <span>
-                {formatBytes(progress.downloaded)}
-                {progress.total > 0 && ` / ${formatBytes(progress.total)}`}
-              </span>
-            </div>
-            <div className="h-2 w-full overflow-hidden rounded-full bg-[var(--border)]">
-              <div
-                className="h-full rounded-full bg-purple-400 transition-all duration-300"
-                style={{ width: `${progressPercent}%` }}
-              />
-            </div>
-            <div className="flex items-center justify-between text-xs text-[var(--muted-foreground)]/60">
-              <span>{progressPercent}%</span>
-              {progress.speed > 0 && <span>{formatSpeed(progress.speed)}</span>}
-            </div>
-          </div>
-        )}
-
         {progress?.status === "error" && (
           <div className="rounded-lg border border-red-500/20 bg-red-500/5 p-3 text-sm text-red-400">
             {progress.error || "Download failed. Please try again."}
@@ -320,13 +368,13 @@ export function ModelDownloadModal({ open, onClose }: Props) {
         )}
 
         <div className="flex items-center gap-2">
-          {isDownloading ? (
+          {isSetupBusy ? (
             <button
-              onClick={() => void cancelDownload()}
+              onClick={handleCancelSetup}
               className="flex w-full items-center justify-center gap-2 rounded-xl border border-[var(--border)] px-4 py-2.5 text-sm text-[var(--muted-foreground)] transition-colors hover:bg-[var(--secondary)]"
             >
               <X size="0.875rem" />
-              Cancel Download
+              Cancel Setup
             </button>
           ) : (
             <>
@@ -338,7 +386,8 @@ export function ModelDownloadModal({ open, onClose }: Props) {
               </button>
               <button
                 onClick={handleDone}
-                className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-purple-500/15 px-4 py-2.5 text-sm font-medium text-purple-300 transition-colors hover:bg-purple-500/25"
+                disabled={!canFinish}
+                className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-purple-500/15 px-4 py-2.5 text-sm font-medium text-purple-300 transition-colors hover:bg-purple-500/25 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-purple-500/15"
               >
                 Done
               </button>
@@ -346,7 +395,7 @@ export function ModelDownloadModal({ open, onClose }: Props) {
           )}
         </div>
 
-        {!hasModel && !isDownloading && (
+        {!hasModel && !isSetupBusy && (
           <div className="rounded-xl border border-[var(--border)] bg-[var(--card)]/50 p-3">
             <span className="text-xs font-medium uppercase tracking-wider text-[var(--muted-foreground)]/60">
               What the local model handles
