@@ -5,7 +5,6 @@ import { useState, useRef, useCallback, useMemo } from "react";
 import { toast } from "sonner";
 import {
   usePersonas,
-  useCreatePersona,
   useDeletePersona,
   useActivatePersona,
   useUploadPersonaAvatar,
@@ -21,7 +20,6 @@ import {
   Plus,
   Trash2,
   User,
-  Loader2,
   Pencil,
   Camera,
   Star,
@@ -71,7 +69,6 @@ function estimateTokens(p: PersonaRow): number {
 
 export function PersonasPanel() {
   const { data: personas, isLoading } = usePersonas();
-  const createPersona = useCreatePersona();
   const deletePersona = useDeletePersona();
   const duplicatePersona = useDuplicatePersona();
   const updatePersona = useUpdatePersona();
@@ -107,7 +104,7 @@ export function PersonasPanel() {
   const isActive = (p: PersonaRow) => p.isActive === true || p.isActive === "true";
 
   const handleCreate = () => {
-    createPersona.mutate({ name: "New Persona", description: "" });
+    openModal("create-persona");
   };
 
   const handleAvatarClick = (e: React.MouseEvent, id: string) => {
@@ -423,11 +420,10 @@ export function PersonasPanel() {
       <div className="flex gap-1.5">
         <button
           onClick={handleCreate}
-          disabled={createPersona.isPending}
-          className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r from-emerald-400 to-teal-500 px-3 py-2 text-xs font-medium text-white shadow-md shadow-emerald-400/15 transition-all hover:shadow-lg hover:shadow-emerald-400/25 active:scale-[0.98] disabled:opacity-50"
+          className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r from-emerald-400 to-teal-500 px-3 py-2 text-xs font-medium text-white shadow-md shadow-emerald-400/15 transition-all hover:shadow-lg hover:shadow-emerald-400/25 active:scale-[0.98]"
           title="New"
         >
-          {createPersona.isPending ? <Loader2 size="0.75rem" className="animate-spin" /> : <Plus size="0.75rem" />}
+          <Plus size="0.75rem" />
           <span className="md:hidden">New</span>
         </button>
         <button

@@ -4,7 +4,6 @@
 import { useState, useEffect } from "react";
 import {
   useConnections,
-  useCreateConnection,
   useDuplicateConnection,
   useDeleteConnection,
   useUpdateConnection,
@@ -16,7 +15,6 @@ import {
   Plus,
   Trash2,
   Link,
-  Loader2,
   Check,
   Shuffle,
   ExternalLink,
@@ -170,7 +168,6 @@ function SidecarCard() {
 
 export function ConnectionsPanel() {
   const { data: connections, isLoading } = useConnections();
-  const createConnection = useCreateConnection();
   const duplicateConnection = useDuplicateConnection();
   const deleteConnection = useDeleteConnection();
   const updateConnection = useUpdateConnection();
@@ -178,19 +175,9 @@ export function ConnectionsPanel() {
 
   const activeConnectionId = activeChat?.connectionId ?? null;
   const openConnectionDetail = useUIStore((s) => s.openConnectionDetail);
+  const openModal = useUIStore((s) => s.openModal);
   const linkApiBannerDismissed = useUIStore((s) => s.linkApiBannerDismissed);
   const dismissLinkApiBanner = useUIStore((s) => s.dismissLinkApiBanner);
-
-  const handleCreate = () => {
-    createConnection.mutate(
-      { name: "New Connection", provider: "openai", apiKey: "" },
-      {
-        onSuccess: (data: any) => {
-          if (data?.id) openConnectionDetail(data.id);
-        },
-      },
-    );
-  };
 
   return (
     <div className="flex flex-col gap-2 p-3">
@@ -198,11 +185,10 @@ export function ConnectionsPanel() {
       <SidecarCard />
 
       <button
-        onClick={handleCreate}
-        disabled={createConnection.isPending}
-        className="flex items-center justify-center gap-1.5 rounded-xl px-3 py-2.5 text-xs font-medium transition-all active:scale-[0.98] bg-gradient-to-r from-sky-400 to-blue-500 text-white shadow-md shadow-sky-400/15 hover:shadow-lg hover:shadow-sky-400/25 disabled:opacity-50"
+        onClick={() => openModal("create-connection")}
+        className="flex items-center justify-center gap-1.5 rounded-xl px-3 py-2.5 text-xs font-medium transition-all active:scale-[0.98] bg-gradient-to-r from-sky-400 to-blue-500 text-white shadow-md shadow-sky-400/15 hover:shadow-lg hover:shadow-sky-400/25"
       >
-        {createConnection.isPending ? <Loader2 size="0.8125rem" className="animate-spin" /> : <Plus size="0.8125rem" />}
+        <Plus size="0.8125rem" />
         Add Connection
       </button>
 
