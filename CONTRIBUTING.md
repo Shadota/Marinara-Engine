@@ -78,25 +78,17 @@ There is not a meaningful automated repo test suite yet. Do not present `pnpm te
 
 ## Choosing What to Work On
 
-> Status: Proposed under the structure pilot (v1.6 cycle). Reversible; lifted with the pilot if it doesn't earn its keep.
+> Status: Proposed under the structure pilot (v1.6 cycle). Reversible.
 
-Volunteers contribute on different cadences, and not everyone can or should be touching every part of the codebase. The matrix below is a guide, not a rule — its purpose is to channel effort where it lands well, and to make the "ask first" expectation explicit so nobody wastes a weekend on a PR that won't land.
+**Filed issues are triaged and assigned by maintainers** (currently Marinara and Tim). Please don't start coding work until you've been assigned the issue.
 
-| Work type                                                       | Open for any contributor | Needs design issue + owner approval |
-| --------------------------------------------------------------- | ------------------------ | ----------------------------------- |
-| Bug fix labeled `bug` + P1/P2                                   | Yes                      | No                                  |
-| `good first issue` items                                        | Yes                      | No                                  |
-| Feature already on the current milestone, no assignee yet       | Yes                      | No                                  |
-| Feature already on the current milestone, has an assignee       | Coordinate first         | Coordinate first                    |
-| Off-roadmap feature (no milestone)                              | No                       | Yes — always                        |
-| Refactor in a domain you don't own                              | No                       | Yes — always                        |
-| Cross-domain work (touches multiple owned areas)                | No                       | Yes — multiple owners must thumb up |
+To propose new work:
 
-If you have an itch to scratch that doesn't fit the "open" rows, open a [design proposal](.github/ISSUE_TEMPLATE/design_proposal.md) first. Five minutes of writing saves everyone a half-built PR.
+- **Bug?** File a [bug report](.github/ISSUE_TEMPLATE/issue_report.md). Maintainers triage, prioritize, and route.
+- **Small feature?** File a [feature request](.github/ISSUE_TEMPLATE/feature_request.md). Maintainers will accept (label `accepted`), park (label `parked`), or decline (label `declined`) based on roadmap fit.
+- **Non-trivial change?** (more than ~3 days of work, touches a shared subsystem, or significantly changes UX) — File a [design proposal](.github/ISSUE_TEMPLATE/design_proposal.md) first. Sketches the approach so maintainers can thumbs-up before code starts.
 
-### Domain owners
-
-To be populated once the Phase 2 ownership conversation lands. Until then, file a design proposal and the maintainers will route it to whoever touches the affected area.
+This avoids the most common waste in a volunteer project: spending a weekend on a PR for work that doesn't fit the roadmap. Five minutes of writing on the front end saves the whole thing.
 
 ## Documentation Rules
 
