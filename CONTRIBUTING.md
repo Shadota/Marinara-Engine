@@ -76,6 +76,28 @@ There is not a meaningful automated repo test suite yet. Do not present `pnpm te
 - Call out manual validation clearly, especially for launcher, installer, or Android wrapper changes.
 - Avoid version drift. If your PR intentionally bumps a release, update every version-bearing file in one pass.
 
+## Choosing What to Work On
+
+> Status: Proposed under the structure pilot (v1.6 cycle). Reversible; lifted with the pilot if it doesn't earn its keep.
+
+Volunteers contribute on different cadences, and not everyone can or should be touching every part of the codebase. The matrix below is a guide, not a rule — its purpose is to channel effort where it lands well, and to make the "ask first" expectation explicit so nobody wastes a weekend on a PR that won't land.
+
+| Work type                                                       | Open for any contributor | Needs design issue + owner approval |
+| --------------------------------------------------------------- | ------------------------ | ----------------------------------- |
+| Bug fix labeled `bug` + P1/P2                                   | Yes                      | No                                  |
+| `good first issue` items                                        | Yes                      | No                                  |
+| Feature already on the current milestone, no assignee yet       | Yes                      | No                                  |
+| Feature already on the current milestone, has an assignee       | Coordinate first         | Coordinate first                    |
+| Off-roadmap feature (no milestone)                              | No                       | Yes — always                        |
+| Refactor in a domain you don't own                              | No                       | Yes — always                        |
+| Cross-domain work (touches multiple owned areas)                | No                       | Yes — multiple owners must thumb up |
+
+If you have an itch to scratch that doesn't fit the "open" rows, open a [design proposal](.github/ISSUE_TEMPLATE/design_proposal.md) first. Five minutes of writing saves everyone a half-built PR.
+
+### Domain owners
+
+To be populated once the Phase 2 ownership conversation lands. Until then, file a design proposal and the maintainers will route it to whoever touches the affected area.
+
 ## Documentation Rules
 
 - `README.md` is the user-facing overview and quickstart, not the full release log.
