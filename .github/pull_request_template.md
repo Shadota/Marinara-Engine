@@ -1,3 +1,9 @@
+## Closes
+
+<!-- e.g. "Closes #42" — auto-closes the linked issue when this PR merges.
+     Leave blank if this PR has no associated issue. -->
+
+
 ## Why this change
 
 <!-- What user problem, bug, or goal does this solve? -->
